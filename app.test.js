@@ -15,11 +15,10 @@ describe("Todos API", () => {
                         completed: expect.any(Boolean)
                     })
                 ]))
-
             })
     })
 
-    it('GET /todos/:id --> get a todo by id', () => { 
+    it('GET /todos/:id --> get a todo by id', () => {
         return request(app)
             .get("/todos/1")
             .expect("Content-Type", /json/)
@@ -32,8 +31,35 @@ describe("Todos API", () => {
                 }))
             })
     })
-    
-    it("GET /todos/id --> 404 if not found", () => {
+
+    it("GET /todos/:id --> 404 if not found", () => {
         return request(app).get("/todos/9999").expect(404);
     })
+
+    it("POST /todos --> create todo", () => {
+        return request(app)
+            .post("/todos")
+            .send({
+                name: "Jochy"
+            })
+            .expect("Content-Type", /json/)
+            .expect(201)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining({
+                        name: "Jochy",
+                        completed: false
+                    })
+                )
+            })
+    });
+
+    it("POST /todos --> validates request body", () => {
+        return request(app)
+            .post("/todos")
+            .send({
+                name: 123
+            })
+            .expect(422)
+    });
 })
